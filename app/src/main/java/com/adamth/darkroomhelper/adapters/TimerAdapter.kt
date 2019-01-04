@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.timer_recycler_item.view.*
 class TimerAdapter(context: Context, items: ArrayList<DarkroomTimer>) : Adapter<ViewHolder>() {
 
     private var mItems: ArrayList<DarkroomTimer> = items
-    private var mContext: Context = context
+    var mContext: Context = context
     private var activeTimer: Int = -1
     var timerRunning = false
 

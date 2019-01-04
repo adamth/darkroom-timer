@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Darkroom Helper</string>
     <string name="action_image_description">Action image</string>
+    <string name="saved_timers">saved timers</string>
 </resources>

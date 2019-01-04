@@ -1,6 +1,8 @@
 package com.adamth.darkroomhelper.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -25,17 +27,15 @@ import android.widget.TextView
 import android.widget.Toast
 import com.adamth.darkroomhelper.classes.SwipeToDeleteCallback
 import com.adamth.darkroomhelper.classes.SwipeToEditCallback
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.delete_timer.view.*
 import java.lang.NumberFormatException
-
-
-
-
-
 
 class MainActivity : AppCompatActivity() {
     private var mItems: ArrayList<DarkroomTimer> = ArrayList()
     private lateinit var mAdapter: TimerAdapter
+    private var mPrefs: SharedPreferences? = null
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mPrefs = this.getPreferences(Context.MODE_PRIVATE)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         super.onCreate(savedInstanceState)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -67,10 +68,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveTimers() {
+        val prefString = getString(R.string.saved_timers)
+        val itemsJSONString = Gson().toJson(mItems)
+        val editor = mPrefs!!.edit()
+        editor.putString(prefString, itemsJSONString)
+        editor.commit()
+    }
+
     private fun prepareTimers() {
-        mItems.add(DarkroomTimer(60, "Developer"))
-        mItems.add(DarkroomTimer(30, "Stop"))
-        mItems.add(DarkroomTimer(60, "Fixer"))
+        val prefString = getString(R.string.saved_timers)
+        val connectionsJSONString = getPreferences(MODE_PRIVATE).getString(prefString, null)
+        val type = object : TypeToken<ArrayList<DarkroomTimer>>() {}.type
+        val savedItems: ArrayList<DarkroomTimer>? = Gson().fromJson<ArrayList<DarkroomTimer>>(connectionsJSONString, type)
+
+        if (savedItems == null) {
+            mItems.add(DarkroomTimer(60, "Developer"))
+            mItems.add(DarkroomTimer(30, "Stop"))
+            mItems.add(DarkroomTimer(60, "Fixer"))
+        } else {
+            mItems = savedItems
+        }
+
+        saveTimers()
+
         prepareRecycler()
     }
 
@@ -89,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 dialogView.timer_name_text.text = currentItem.name
 
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                alertDialog.setView(dialogView)
+                alertDialog?.setView(dialogView)
                 alertDialog.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
                 alertDialog.show()
@@ -104,6 +125,7 @@ class MainActivity : AppCompatActivity() {
                 dialogView.confirm_delete_button.setOnClickListener{
                     alertDialog.dismiss()
                     mAdapter.removeAt(viewHolder.adapterPosition)
+                    saveTimers()
                 }
             }
         }
@@ -139,6 +161,7 @@ class MainActivity : AppCompatActivity() {
                         val totalSeconds = (minutes * 60) + seconds
                         mItems[viewHolder.adapterPosition] = DarkroomTimer(totalSeconds, timerName)
                         mAdapter.notifyDataSetChanged()
+                        saveTimers()
 
                         alertDialog.dismiss()
                     } catch (nfe: NumberFormatException) {
@@ -216,6 +239,7 @@ class MainActivity : AppCompatActivity() {
 
                     mItems.add(DarkroomTimer(totalSeconds, timerName))
                     mAdapter.notifyDataSetChanged()
+                    saveTimers()
 
                     alertDialog.dismiss()
                 } catch (nfe: NumberFormatException) {

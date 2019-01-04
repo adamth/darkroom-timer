@@ -1,6 +1,10 @@
 package com.adamth.darkroomhelper.classes
 
+import android.content.Context
+import android.os.Build
 import android.os.CountDownTimer
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -98,6 +102,8 @@ class DarkroomTimer(seconds: Int, name: String) {
             actionImage.visibility = View.VISIBLE
             actionImage.setImageResource(R.drawable.ic_check_white_63dp)
             view.mTimerAdapter.timerRunning = false
+            view.mTimerAdapter.mContext.vibrate()
+
         }
     }
 
@@ -107,3 +113,35 @@ class DarkroomTimer(seconds: Int, name: String) {
         status = TimerStatus.READY
     }
 }
+
+// Extension method to vibrate a phone programmatically
+fun Context.vibrate(milliseconds:Long = 500){
+    val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+    // Check whether device/hardware has a vibrator
+    val canVibrate:Boolean = vibrator.hasVibrator()
+
+    if(canVibrate){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            // void vibrate (VibrationEffect vibe)
+            vibrator.vibrate(
+                VibrationEffect.createOneShot(
+                    milliseconds,
+                    // The default vibration strength of the device.
+                    VibrationEffect.DEFAULT_AMPLITUDE
+                )
+            )
+        }else{
+            // This method was deprecated in API level 26
+            vibrator.vibrate(milliseconds)
+        }
+    }
+}
+
+
+// Extension property to check whether device has Vibrator
+val Context.hasVibrator:Boolean
+    get() {
+        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        return vibrator.hasVibrator()
+    }
