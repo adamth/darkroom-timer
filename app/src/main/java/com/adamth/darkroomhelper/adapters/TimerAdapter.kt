@@ -40,11 +40,14 @@ class TimerAdapter(context: Context, items: ArrayList<DarkroomTimer>) : Adapter<
     fun removeAt(position: Int) {
         mItems.removeAt(position)
         notifyItemRemoved(position)
+        if (activeTimer == position) {
+            activeTimer = -1
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.timerValueTextView.text = mItems.get(position).currentTime()
-        holder.timerNameTextView.text = mItems.get(position).name
+        holder.timerValueTextView.text = mItems[position].currentTime()
+        holder.timerNameTextView.text = mItems[position].name
         var timer = mItems.get(position)
 
         if (timer.status == TimerStatus.ACTIVE) {
@@ -66,7 +69,7 @@ class TimerAdapter(context: Context, items: ArrayList<DarkroomTimer>) : Adapter<
                     timerRunning = timer.toggleTimer(holder)
                 }
             } else {
-                val previouslyActiveTimer = mItems.get(activeTimer)
+                val previouslyActiveTimer = mItems[activeTimer]
                 if (previouslyActiveTimer.status != TimerStatus.ACTIVE) {
                     // Current timer is not running - update active timer and toggle it
                     activeTimer = position
@@ -82,6 +85,6 @@ class ViewHolder (view: View, timerAdapter: TimerAdapter) : RecyclerView.ViewHol
     // Holds the TextView that will add each animal to
     val timerNameTextView: TextView = view.timer_name_text_view
     val timerValueTextView: TextView = view.timer_value_text_view
-    val parent: View = view.parent_layout
+    val parent: View = view.timer_parent_layout
     val actionImage: ImageView = view.action_image
 }

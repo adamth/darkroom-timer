@@ -5,7 +5,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimaryRed"
-                android:id="@+id/parent_layout"
+                android:id="@+id/timer_parent_layout"
                 android:paddingBottom="10sp"
                 android:paddingTop="10sp">
 

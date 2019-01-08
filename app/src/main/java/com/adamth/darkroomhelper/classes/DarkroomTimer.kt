@@ -20,7 +20,7 @@ class DarkroomTimer(seconds: Int, name: String) {
     private var currentTime = seconds
     private val initialTime = seconds
     private var running = false
-    private lateinit var countDownTimer: CountDownTimer
+    private var countDownTimer: CountDownTimer? = null
 
     fun currentTime(): String {
         return "${this.minutes()}:${this.seconds()}"
@@ -73,7 +73,9 @@ class DarkroomTimer(seconds: Int, name: String) {
     private fun stopTimer() {
         running = false
         status = TimerStatus.READY
-        countDownTimer.cancel()
+        if (countDownTimer != null) {
+            countDownTimer!!.cancel()
+        }
     }
 
     fun toggleTimer(view: ViewHolder): Boolean {

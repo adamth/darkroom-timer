@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             app:srcCompat="@drawable/ic_settings_white_24dp"
-            android:id="@+id/settings_button"
+            android:id="@+id/timer_group_button"
             app:backgroundTint="@color/colorPrimaryRed"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"

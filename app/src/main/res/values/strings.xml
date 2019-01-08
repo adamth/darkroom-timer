@@ -2,4 +2,5 @@
     <string name="app_name">Darkroom Helper</string>
     <string name="action_image_description">Action image</string>
     <string name="saved_timers">saved timers</string>
+    <string name="saved_timer_groups">saved timer groups</string>
 </resources>

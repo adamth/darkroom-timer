@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryRed"
+                android:id="@+id/timer_group_parent_layout">
+
+    <TextView
+            android:text="Timer Group Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:id="@+id/timer_group_name_text"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:fontFamily="@font/rubik_bold"
+            android:textSize="30dp"
+            android:textColor="@color/colorWhiteRed"/>
+</RelativeLayout>
