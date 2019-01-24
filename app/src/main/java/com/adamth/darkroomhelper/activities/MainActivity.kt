@@ -1,5 +1,6 @@
 package com.adamth.darkroomhelper.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -21,6 +22,7 @@ import com.adamth.darkroomhelper.R
 import com.adamth.darkroomhelper.adapters.TimerAdapter
 import kotlinx.android.synthetic.main.add_timer.view.*
 import android.util.DisplayMetrics
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.adamth.darkroomhelper.classes.SwipeToDeleteCallback
@@ -36,6 +38,7 @@ class MainActivity : BaseTableViewActivity() {
     private lateinit var mAdapter: TimerAdapter
     private var mPrefs: SharedPreferences? = null
     private var timerGroupUUID: String? = null
+    private val SET_TIMER_GROUP_REQUEST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +48,20 @@ class MainActivity : BaseTableViewActivity() {
         prepareTimers()
         prepareAddButton()
 
+        // select timer group button
         val timerGroupButton = findViewById<FloatingActionButton>(R.id.timer_group_button)
         timerGroupButton.setOnClickListener {
             val intent = Intent(this, TimerGroupActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, SET_TIMER_GROUP_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SET_TIMER_GROUP_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                val testData = data?.getBooleanExtra("test", false)
+                Log.d("thinh", testData.toString())
+            }
         }
     }
 
@@ -83,9 +96,10 @@ class MainActivity : BaseTableViewActivity() {
         val savedItems: ArrayList<DarkroomTimer>? = Gson().fromJson<ArrayList<DarkroomTimer>>(timersJSONString, type)
 
         if (savedItems == null) {
-            mItems.add(DarkroomTimer(60, "Developer"))
-            mItems.add(DarkroomTimer(30, "Stop"))
-            mItems.add(DarkroomTimer(60, "Fixer"))
+            mItems.add(DarkroomTimer(120, "Pre Soak"))
+            mItems.add(DarkroomTimer(195, "Developer"))
+            mItems.add(DarkroomTimer(260, "Bleach"))
+            mItems.add(DarkroomTimer(360, "Fixer"))
         } else {
             mItems = savedItems
         }
@@ -114,6 +128,11 @@ class MainActivity : BaseTableViewActivity() {
                 alertDialog.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
                 alertDialog.show()
+
+                // user taps outside dialog
+                alertDialog.setOnCancelListener{
+                    mAdapter.notifyDataSetChanged()
+                }
 
                 alertDialog.window.decorView.systemUiVisibility = this@MainActivity.window.decorView.systemUiVisibility
 
@@ -146,6 +165,11 @@ class MainActivity : BaseTableViewActivity() {
 
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
                 alertDialog.setView(dialogView)
+
+                // user taps outside dialog
+                alertDialog.setOnCancelListener{
+                    mAdapter.notifyDataSetChanged()
+                }
 
                 alertDialog.show()
 

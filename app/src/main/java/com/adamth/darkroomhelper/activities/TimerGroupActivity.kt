@@ -1,6 +1,8 @@
 package com.adamth.darkroomhelper.activities
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
@@ -32,6 +34,7 @@ class TimerGroupActivity : BaseTableViewActivity() {
         val timerGroupButton = findViewById<FloatingActionButton>(R.id.timer_group_button)
         timerGroupButton.setImageResource(R.drawable.ic_close_red_24dp)
         timerGroupButton.setOnClickListener {
+            setResult(Activity.RESULT_CANCELED)
             finish()
         }
 
